@@ -1,0 +1,67 @@
+﻿@using eTickets.Data.ViewModels
+@using Microsoft.Extensions.Options
+@inject IOptions<eTickets.Data.Services.PaymentSettings> Stripe
+@model ShoppingCardVM
+
+@{
+	ViewData["Title"] = "Shopping card summary";
+}
+
+<div class="row">
+	<div class="col-md-8 offset-2">
+		<div class="text-center">
+			<h2>Your shpping card summary</h2>
+
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Selected amount</th>
+					<th>Movie</th>
+					<th>Price</th>
+					<th>Subtotal</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var item in Model.ShoppingCard.ShoppingCardItems)
+				{
+					<tr>
+						<td class="align-middle">@item.Amount</td>
+						<td class="align-middle">@item.Movie.Name</td>
+						<td class="align-middle">@item.Movie.Price.ToString("c")</td>
+						<td class="align-middle">@((item.Amount * item.Movie.Price).ToString("c"))</td>
+						<td class ="align-middle">
+
+							<a class="text-center" asp-controller="Orders" asp-action="RemoveItemFromShoppingCard" asp-route-id="@item.Movie.Id">
+								<i class="bi bi-cart-dash"></i>
+							</a>
+
+							<a class="text-success" asp-controller="Orders" asp-action="AddItemToShoppingCard" asp-route-id="@item.Movie.Id">
+								<i class="bi bi-cart-plus"></i>
+							</a>
+						
+						</td>
+					</tr>
+				}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="2"></td>
+					<td><b>Total:</b></td>
+					<td>@Model.ShoppingCardTotal.ToString("c")</td>
+				</tr>
+			</tfoot>
+		</table>
+		<div class="text-center">
+			<div class="btn-group">
+				<form asp-action="CreateCheckoutSession" asp-controller="Orders" method="POST">
+					<button class="btn btn-outline-primary" type="submit">Checkout</button>
+				</form>
+				<a class="btn btn-outline-success" asp-controller="Movies" asp-action="Index">
+					Add More Items
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
